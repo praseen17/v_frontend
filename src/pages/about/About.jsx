@@ -320,8 +320,8 @@ const About = () => {
         { video: s3Video, poster: s3Poster, name: "RISHI", role: "FREELANCER" },
         // New testimonials
         { video: s4Video, poster: s4Poster, name: "Vegi Bharath", role: "XIth Grade Student" },
-        { video: s5Video, poster: s5Poster, name: "Sartan", role: "Student" },
-        { video: s6Video, poster: s6Poster, name: "Neha Gupta", role: "Computer Science Student" }
+        { video: s5Video, poster: s5Poster, name: "Sarvin", role: "SRM Student" },
+        { video: s6Video, poster: s6Poster, name: "Pran", role: "Computer Science Student" }
       ].map((testimonial) => (
         <div className="testimonial-card" key={testimonial.name}>
           <div className="video-wrapper">
