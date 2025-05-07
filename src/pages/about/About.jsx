@@ -321,7 +321,7 @@ const About = () => {
         // New testimonials
         { video: s4Video, poster: s4Poster, name: "Vegi Bharath", role: "XIth Grade Student" },
         { video: s5Video, poster: s5Poster, name: "Sarvin", role: "SRM Student" },
-        { video: s6Video, poster: s6Poster, name: "Pran", role: "Computer Science Student" }
+        { video: s6Video, poster: s6Poster, name: "Praneeth", role: "Computer Science Student" }
       ].map((testimonial) => (
         <div className="testimonial-card" key={testimonial.name}>
           <div className="video-wrapper">
