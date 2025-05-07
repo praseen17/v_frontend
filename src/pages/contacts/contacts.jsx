@@ -27,7 +27,7 @@ const Contacts = () => {
     },
     {
       question: "What are the payment options?",
-      answer: "We accept various payment methods including credit/debit cards, net banking, and EMI options.",
+      answer: "We accept various payment methods including credit/debit cards, net banking.",
       category: "Payment"
     }
   ];
