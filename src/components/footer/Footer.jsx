@@ -49,7 +49,6 @@ const Footer = () => {
                 <h4 className="footer-title">Contact Us</h4>
                 <ul className="footer-contact">
                   <li><FaMapMarkerAlt /> <span>#2-1-70, Brilliants School Area,<br />Ibrahimpatnam Krishna - 521 456,<br />Andhra Pradesh</span></li>
-                  <li><FaPhone /> +91 9182890236</li>
                   <li><FaPhone /> +91 8985320226</li>
                   <li><FaEnvelope /> vhass0310@gmail.com</li>
                 </ul>
