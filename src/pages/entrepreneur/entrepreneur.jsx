@@ -1,6 +1,7 @@
 import React from "react";
 import "./entrepreneur.css";
 import { FaLightbulb, FaChartLine, FaNetworkWired, FaHandshake } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Entrepreneur = () => {
   return (
