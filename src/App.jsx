@@ -67,7 +67,7 @@ const AppContent = () => {
             />
             <Route
               path="/course/:id"
-              element={isAuth ? <CourseDescription user={user} /> : <Login />}
+              element={<CourseDescription />}
             />
             <Route
               path="/payment-success/:id"
