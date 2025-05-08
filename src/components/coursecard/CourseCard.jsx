@@ -66,8 +66,8 @@ const CourseCard = ({ course }) => {
           )}
         </>
       ) : (
-        <button onClick={() => navigate("/login")} className="common-btn">
-          Get Started
+        <button onClick={() => navigate(`/course/${course._id}`)} className="common-btn">
+          View Details
         </button>
       )}
 
