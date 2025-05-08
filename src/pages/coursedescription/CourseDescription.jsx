@@ -9,133 +9,127 @@ import { UserData } from "../../context/UserContext";
 import Loading from "../../components/loading/Loading";
 
 const CourseDescription = () => {
-  const params = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
   const { user, isAuth } = UserData();
-  const [loading, setLoading] = useState(false);
-
-  const { fetchUser } = UserData();
-  const { fetchCourse, course, fetchCourses, fetchMyCourse } = CourseData();
+  const [loading, setLoading] = useState(true);
+  const [course, setCourse] = useState(null);
 
   useEffect(() => {
-    fetchCourse(params.id);
-  }, []);
+    const fetchCourseData = async () => {
+      try {
+        const { data } = await axios.get(`${server}/api/course/${id}`);
+        setCourse(data.course);
+      } catch (error) {
+        toast.error("Failed to load course details");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourseData();
+  }, [id]);
 
   const checkoutHandler = async () => {
     if (!isAuth) {
       toast.error("Please login to purchase the course");
-      navigate("/login");
+      navigate("/login", { state: { from: `/course/${id}` } });
       return;
     }
 
-    const token = localStorage.getItem("token");
     setLoading(true);
-
     try {
-      const {
-        data: { order },
-      } = await axios.post(
-        `${server}/api/course/checkout/${params.id}`,
+      const { data: { order } } = await axios.post(
+        `${server}/api/course/checkout/${id}`,
         {},
-        {
-          headers: {
-            token,
-          },
-        }
+        { headers: { token: localStorage.getItem("token") } }
       );
 
       const options = {
         key: "rzp_test_yOMeMyaj2wlvTt",
-        amount: order.id,
+        amount: order.amount,
         currency: "INR",
-        name: "Vhass",
-        description: "Learn with us",
+        name: course.title,
+        description: "Course Enrollment",
         order_id: order.id,
-
-        handler: async function (response) {
-          const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
-            response;
-
+        handler: async (response) => {
           try {
-            const { data } = await axios.post(
-              `${server}/api/verification/${params.id}`,
+            await axios.post(
+              `${server}/api/verification/${id}`,
               {
-                razorpay_order_id,
-                razorpay_payment_id,
-                razorpay_signature,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
               },
-              {
-                headers: {
-                  token,
-                },
-              }
+              { headers: { token: localStorage.getItem("token") } }
             );
-
-            await fetchUser();
-            await fetchCourses();
-            await fetchMyCourse();
-            toast.success(data.message);
-            setLoading(false);
-            navigate(`/payment-success/${razorpay_payment_id}`);
+            toast.success("Payment successful!");
+            navigate(`/payment-success/${response.razorpay_payment_id}`);
           } catch (error) {
-            toast.error(error.response.data.message);
+            toast.error("Payment verification failed");
+          } finally {
             setLoading(false);
           }
         },
-        theme: {
-          color: "#8a4baf",
-        },
+        theme: { color: "#8a4baf" }
       };
+
       const razorpay = new window.Razorpay(options);
       razorpay.open();
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Payment failed");
       setLoading(false);
     }
   };
 
+  if (loading) return <Loading />;
+  if (!course) return <div className="error-message">Course not found</div>;
+
   return (
-    <>
-      {loading ? (
-        <Loading />
-      ) : (
-        <>
-          {course && (
-            <div className="course-description">
-              <div className="course-header">
-                <img
-                  src={`${server}/${course.image}`}
-                  alt=""
-                  className="course-image"
-                />
-                <div className="course-info">
-                  <h2>{course.title}</h2>
-                  <p>Instructor: {course.createdBy}</p>
-                  <p>Duration: {course.duration} Hours</p>
-                </div>
-              </div>
+    <div className="course-description">
+      <div className="course-header">
+        <h1>{course.title}</h1>
+        <p className="course-tagline">
+          Master the tools and techniques used by hackers to ethically protect organizations
+        </p>
+        <img src={`${server}/${course.image}`} alt={course.title} />
+      </div>
 
-              <p>{course.description}</p>
+      <div className="course-meta">
+        <span>Instructor: {course.createdBy}</span>
+        <span>Duration: {course.duration} hours</span>
+        <span>Price: ₹{course.price}</span>
+      </div>
 
-              <p>Let's get started with course At ₹{course.price}</p>
+      <div className="course-content">
+        <h2>About This Course</h2>
+        <p>{course.description}</p>
 
-              {isAuth && user && user.subscription.includes(course._id) ? (
-                <button
-                  onClick={() => navigate(`/course/study/${course._id}`)}
-                  className="common-btn"
-                >
-                  Study
-                </button>
-              ) : (
-                <button onClick={checkoutHandler} className="common-btn">
-                  {isAuth ? "Buy Now" : "Login to Purchase"}
-                </button>
-              )}
-            </div>
-          )}
-        </>
-      )}
-    </>
+        <div className="certification-box">
+          <h2>Certification</h2>
+          <ul>
+            <li>Covers 100 hands-on labs in our cyber range environment</li>
+            <li>Open doors to roles like Ethical Hacker, Security Analyst</li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="action-buttons">
+        {isAuth && user?.subscription?.includes(course._id) ? (
+          <button 
+            onClick={() => navigate(`/course/study/${course._id}`)}
+            className="study-btn"
+          >
+            Continue Learning
+          </button>
+        ) : (
+          <button onClick={checkoutHandler} className="enroll-btn">
+            {isAuth ? "Enroll Now" : "Login to Enroll"}
+          </button>
+        )}
+      </div>
+    </div>
   );
 };
 
