@@ -25,7 +25,7 @@ const Home = () => {
       </section>
 
       <section className="grid grid-1">
-        <h2 className="autoShow">Introduce</h2>
+        <h2 className="autoShow">Why US?</h2>
       </section>
 
       <section className="grid grid-2">
